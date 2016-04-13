@@ -10,8 +10,9 @@ class Ai(base.BaseAi):
     """
     Awesome bot that destroys anything in sight.
     """
-    start_posx = -11
+
     def move(self, bots, events):
+
         """
         Assign a convenient Move to each bot.
 
@@ -29,6 +30,7 @@ class Ai(base.BaseAi):
     #        logging.info(event)
 
         response = []
+        hex_visisted = []
 
         bot_ids = []
 
@@ -54,30 +56,12 @@ class Ai(base.BaseAi):
             # Default action
 
             radar_pos = random.choice(list(self.get_valid_radars(bots[0])))
-            start_posy = 0
+            hex_visisted.append(radar_pos);
+            logging.info(hex_visisted)
 
-            logging.info(bot_ids[0])
+            response.append(actions.Radar(bot_id=bots[0].bot_id, x=radar_pos.x , y=radar_pos.y))
+            response.append(actions.Radar(bot_id=bots[1].bot_id, x=radar_pos.x + 7, y=radar_pos.y - 3))
+            response.append(actions.Radar(bot_id=bots[2].bot_id, x=radar_pos.x + 3, y=radar_pos.y + 4))
 
-            response.append(actions.Radar(bot_id=bots[0].bot_id, x=start_posx , y=start_posy))
-            response.append(actions.Radar(bot_id=bots[1].bot_id, x=start_posx, y=start_posy + 5 ))
-            response.append(actions.Radar(bot_id=bots[2].bot_id, x=start_posx , y=start_posy + 9))
-
-            #response.append(actions.Radar(bot_id=bots[0].bot_id, x=radar_pos.x , y=radar_pos.y))
-            #response.append(actions.Radar(bot_id=bots[1].bot_id, x=radar_pos.x + 7, y=radar_pos.y - 3))
-            #response.append(actions.Radar(bot_id=bots[2].bot_id, x=radar_pos.x + 3, y=radar_pos.y + 4))
-
-                start_posx +=4
-
-
-                # for bot in bots:
-                #     if not bot.alive:
-                #         continue
-                #
-                #     response.append(actions.Cannon(bot_id=bot.bot_id, x=0, y=0))
-
-                # move_pos = random.choice(list(self.get_valid_moves(bot)))
-                # response.append(actions.Move(bot_id=bot.bot_id,
-                #                              x=move_pos.x,
-                #                              y=move_pos.y))
 
         return response
