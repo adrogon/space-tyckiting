@@ -30,6 +30,24 @@ class Ai(base.BaseAi):
 
         response = []
 
+        radar_positions = [
+            [0, -11],
+            [4, -11],
+            [8, -11],
+            [11, -11],
+            [-4, -7],
+            [1, -5],
+            [5, -5],
+            [9, -5],
+            [11, -5],
+            [-8, -3],
+            [-3, -1],
+            [1, -1],
+            [5, -1],
+            [9, -1],
+            [12, -1]
+        ]
+
         for event in events:
             # Take evasive actions
             if event.event in ['detected', 'damaged']:
@@ -41,31 +59,38 @@ class Ai(base.BaseAi):
                                                  x=move_pos.x,
                                                  y=move_pos.y))
 
+            # HIT SOMEBODY!! FIRE MORE!!
+            # if event.event in ['hit']:
+            #     if len(bots) == 3:
+            #         response.append(actions.Radar(bot_id=bot_ids[0], x=event.pos.x, y=event.pos.y))
+            #         response.append(actions.Cannon(bot_id=bot_ids[1], x=event.pos.x, y=event.pos.y + 1))
+            #         response.append(actions.Cannon(bot_id=bot_ids[2], x=event.pos.x, y=event.pos.y + 1))
+            #         logging.info("bots shooting around %s,%s", event.pos.x, event.pos.y)
+
             # Found somebody, fire in the hole
-            if event.event == ['radarEcho']:
-                for bot in bots:
-                    response.append(actions.Cannon(bot_id=bot.bot_id, x=0, y=0))
-                    response.append(
-                            actions.Cannon(bot_id=bot.bot_id, x=0 + self.config.cannon, y=0 + self.config.cannon))
-                    response.append(
-                            actions.Cannon(bot_id=bot.bot_id, x=0 - self.config.cannon, y=0 - self.config.cannon))
+            if event.event in ['radarEcho']:
+                if len(bots) == 3:
+                    response.append(actions.Radar(bot_id=bots[0].bot_id, x=event.pos.x, y=event.pos.y))
+                    response.append(actions.Cannon(bot_id=bots[1].bot_id, x=event.pos.x, y=event.pos.y + 1))
+                    response.append(actions.Cannon(bot_id=bots[2].bot_id, x=event.pos.x, y=event.pos.y - 1))
+                    logging.info("bots shooting around %s,%s", event.pos.x, event.pos.y)
 
-            # Default action
-            for bot in bots:
-                radar_pos = random.choice(list(self.get_valid_radars(bot)))
-                response.append(actions.Radar(bot_id=bot.bot_id,
-                                              x=radar_pos.x,
-                                              y=radar_pos.y))
+        # Default action
+        for bot in bots:
+            radar_pos = random.choice(list(radar_positions))
+            response.append(actions.Radar(bot_id=bot.bot_id,
+                                          x=radar_pos[0],
+                                          y=radar_pos[1]))
 
-                # for bot in bots:
-                #     if not bot.alive:
-                #         continue
-                #
-                #     response.append(actions.Cannon(bot_id=bot.bot_id, x=0, y=0))
+            # for bot in bots:
+            #     if not bot.alive:
+            #         continue
+            #
+            #     response.append(actions.Cannon(bot_id=bot.bot_id, x=0, y=0))
 
-                # move_pos = random.choice(list(self.get_valid_moves(bot)))
-                # response.append(actions.Move(bot_id=bot.bot_id,
-                #                              x=move_pos.x,
-                #                              y=move_pos.y))
+            # move_pos = random.choice(list(self.get_valid_moves(bot)))
+            # response.append(actions.Move(bot_id=bot.bot_id,
+            #                              x=move_pos.x,
+            #                              y=move_pos.y))
 
         return response
