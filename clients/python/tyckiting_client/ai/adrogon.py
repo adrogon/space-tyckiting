@@ -10,7 +10,7 @@ class Ai(base.BaseAi):
     """
     Awesome bot that destroys anything in sight.
     """
-
+    start_posx = -11
     def move(self, bots, events):
         """
         Assign a convenient Move to each bot.
@@ -23,12 +23,17 @@ class Ai(base.BaseAi):
             List of actions to perform this round.
         """
 
-        for bot in bots:
-            logging.info(bot)
-        for event in events:
-            logging.info(event)
+    #    for bot in bots:
+    #        logging.info(bot)
+    #    for event in events:
+    #        logging.info(event)
 
         response = []
+
+        bot_ids = []
+
+        for bot in bots:
+            bot_ids.append(bot.bot_id)
 
         for event in events:
             # Take evasive actions
@@ -42,20 +47,27 @@ class Ai(base.BaseAi):
                                                  y=move_pos.y))
 
             # Found somebody, fire in the hole
-            if event.event == ['radarEcho']:
+            if event.event in ['radarEcho']:
                 for bot in bots:
-                    response.append(actions.Cannon(bot_id=bot.bot_id, x=0, y=0))
-                    response.append(
-                            actions.Cannon(bot_id=bot.bot_id, x=0 + self.config.cannon, y=0 + self.config.cannon))
-                    response.append(
-                            actions.Cannon(bot_id=bot.bot_id, x=0 - self.config.cannon, y=0 - self.config.cannon))
+                    response.append(actions.Cannon(bot_id=bot.bot_id, x=event.pos.x,y=event.pos.y))
 
             # Default action
-            for bot in bots:
-                radar_pos = random.choice(list(self.get_valid_radars(bot)))
-                response.append(actions.Radar(bot_id=bot.bot_id,
-                                              x=radar_pos.x,
-                                              y=radar_pos.y))
+
+            radar_pos = random.choice(list(self.get_valid_radars(bots[0])))
+            start_posy = 0
+
+            logging.info(bot_ids[0])
+
+            response.append(actions.Radar(bot_id=bots[0].bot_id, x=start_posx , y=start_posy))
+            response.append(actions.Radar(bot_id=bots[1].bot_id, x=start_posx, y=start_posy + 5 ))
+            response.append(actions.Radar(bot_id=bots[2].bot_id, x=start_posx , y=start_posy + 9))
+
+            #response.append(actions.Radar(bot_id=bots[0].bot_id, x=radar_pos.x , y=radar_pos.y))
+            #response.append(actions.Radar(bot_id=bots[1].bot_id, x=radar_pos.x + 7, y=radar_pos.y - 3))
+            #response.append(actions.Radar(bot_id=bots[2].bot_id, x=radar_pos.x + 3, y=radar_pos.y + 4))
+
+                start_posx +=4
+
 
                 # for bot in bots:
                 #     if not bot.alive:
