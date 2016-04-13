@@ -32,6 +32,10 @@ class Bot(object):
         self.pos = Pos(**pos) if pos else None
         self.hp = hp
 
+    def __str__(self):
+        return 'Bot {id: %s, name: %s, team_id: %s, alive: %s, pos: %s, hp: %s}' \
+               % (self.bot_id, self.name, self.team_id, self.alive, self.pos, self.hp)
+
 
 class Team(object):
     def __init__(self, name, teamId, bots=None, **kwargs):
@@ -49,6 +53,10 @@ class Event(object):
         self.damage = damage
         self.pos = Pos(**pos) if pos else None
         self.winner_team_id = winnerTeamId
+
+    def __str__(self):
+        return 'Event {event: %s, bot_id: %s, source: %s, damage: %s, pos: %s}' \
+               % (self.event, self.bot_id, self.source, self.damage, self.pos)
 
 
 # Message types
@@ -89,8 +97,10 @@ class Events(Message):
 
 
 class Error(Message):
-    def __init__(self, data, **kwargs):
+    def __init__(self, data, type, **kwargs):
+        super(Error, self).__init__(type, **kwargs)
         self.data = data
+
 
 TYPE_MAP = {
     'connected': Connected,

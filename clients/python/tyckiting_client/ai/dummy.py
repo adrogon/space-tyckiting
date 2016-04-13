@@ -8,6 +8,7 @@ class Ai(base.BaseAi):
     """
     Dummy bot that moves randomly around the board.
     """
+
     def move(self, bots, events):
         """
         Move the bot to a random legal positon.
