@@ -59,9 +59,13 @@ class Ai(base.BaseAi):
             hex_visisted.append(radar_pos);
             logging.info(hex_visisted)
 
+            bot_one = [radar_pos.x+7, radar_pos.y-3]
+            bot_two = [radar_pos.x +3, radar_pos.y + 4]
+
+
             response.append(actions.Radar(bot_id=bots[0].bot_id, x=radar_pos.x , y=radar_pos.y))
-            response.append(actions.Radar(bot_id=bots[1].bot_id, x=radar_pos.x + 7, y=radar_pos.y - 3))
-            response.append(actions.Radar(bot_id=bots[2].bot_id, x=radar_pos.x + 3, y=radar_pos.y + 4))
+            response.append(actions.Radar(bot_id=bots[1].bot_id, x=bot_one[0], y=bot_one[1]))
+            response.append(actions.Radar(bot_id=bots[2].bot_id, x=bot_two[0], y=bot_two[1]))
 
 
         return response
