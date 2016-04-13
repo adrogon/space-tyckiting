@@ -24,21 +24,33 @@ class Ai(base.BaseAi):
             List of actions to perform this round.
         """
 
-    #    for bot in bots:
-    #        logging.info(bot)
-    #    for event in events:
-    #        logging.info(event)
+        #    for bot in bots:
+        #        logging.info(bot)
+        #    for event in events:
+        #        logging.info(event)
 
         response = []
-        hex_visisted = []
 
-        bot_ids = []
+        radar_positions = [
+            [0, -11],
+            [4, -11],
+            [8, -11],
+            [11, -11],
+            [-4, -7],
+            [1, -5],
+            [5, -5],
+            [9, -5],
+            [11, -5],
+            [-8, -3],
+            [-3, -1],
+            [1, -1],
+            [5, -1],
+            [9, -1],
+            [12, -1]
+        ]
 
-        for bot in bots:
-            bot_ids.append(bot.bot_id)
 
         for event in events:
-            # Take evasive actions
             if event.event in ['detected', 'damaged']:
                 for bot in bots:
                     if bot.bot_id != event.bot_id:
@@ -48,24 +60,20 @@ class Ai(base.BaseAi):
                                                  x=move_pos.x,
                                                  y=move_pos.y))
 
-            # Found somebody, fire in the hole
             if event.event in ['radarEcho']:
+                logging.info(event.event)
                 for bot in bots:
-                    response.append(actions.Cannon(bot_id=bot.bot_id, x=event.pos.x,y=event.pos.y))
+                    response.append(actions.Cannon(bot_id = bot.bot_id, x = event.pos.x, y = event.pos.y))
 
-            # Default action
-
-            radar_pos = random.choice(list(self.get_valid_radars(bots[0])))
-            hex_visisted.append(radar_pos);
-            logging.info(hex_visisted)
-
-            bot_one = [radar_pos.x+7, radar_pos.y-3]
-            bot_two = [radar_pos.x +3, radar_pos.y + 4]
+        # Default action
+        radar_pos = random.choice(list(self.get_valid_radars(bots[0])))
 
 
-            response.append(actions.Radar(bot_id=bots[0].bot_id, x=radar_pos.x , y=radar_pos.y))
-            response.append(actions.Radar(bot_id=bots[1].bot_id, x=bot_one[0], y=bot_one[1]))
-            response.append(actions.Radar(bot_id=bots[2].bot_id, x=bot_two[0], y=bot_two[1]))
+        bot_one = [radar_pos.x+7, radar_pos.y-3]
+        bot_two = [radar_pos.x +3, radar_pos.y + 4]
 
+        response.append(actions.Radar(bot_id=bots[0].bot_id, x=radar_pos.x , y=radar_pos.y))
+        response.append(actions.Radar(bot_id=bots[1].bot_id, x=bot_one[0], y=bot_one[1]))
+        response.append(actions.Radar(bot_id=bots[2].bot_id, x=bot_two[0], y=bot_two[1]))
 
         return response
